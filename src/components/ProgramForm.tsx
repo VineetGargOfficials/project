@@ -19,13 +19,7 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
   BookOpen,
@@ -39,7 +33,6 @@ import {
 } from "lucide-react";
 import FormHeader from "./FormHeader";
 
-// Demo data
 const facultyOptions = [
   "Engineering and Technology",
   "Informatics and Computing",
@@ -48,23 +41,13 @@ const facultyOptions = [
 
 const departmentsByFaculty = {
   "Engineering and Technology": [
-    "Computer Science",
-    "Civil Engineering",
-    "Mechanical Engineering"
+    "Mechanical Engineering",
+    "Electronics Engineering",
+    "Electrical Engineering"
   ],
   "Informatics and Computing": ["Information Technology", "Computer Applications"],
   "Management Studies": ["Business Administration", "Human Resource Management"]
 };
-
-const durationOptions = [
-  "1 Year",
-  "2 Years",
-  "3 Years",
-  "4 Years",
-  "5 Years",
-  "6 Months",
-  "1.5 Years"
-];
 
 const programTypeOptions = [
   { value: "UG", label: "Undergraduate (UG)" },
@@ -75,11 +58,15 @@ const programTypeOptions = [
   { value: "Other", label: "Other" }
 ];
 
+// duration is now a number in months
 const programSchema = z.object({
   universityId: z.string().min(1, "University ID is required").min(3),
   selectedFaculty: z.string().min(1, "Faculty selection is required"),
   selectedDepartment: z.string().min(1, "Department selection is required"),
-  duration: z.string().min(1, "Duration is required"),
+  duration: z
+    .string()
+    .regex(/^\d+$/, "Duration must be a number of months")
+    .min(1, "Duration is required"),
   programType: z.enum(
     ["UG", "PG", "PHD", "Diploma", "Certificates", "Other"],
     { required_error: "Please select a program type" }
@@ -98,14 +85,11 @@ const programSchema = z.object({
       )
     )
     .refine(
-      (data) => {
-        const hasPrograms =
-          Object.keys(data).length > 0 &&
-          Object.values(data).some((faculty) =>
-            Object.values(faculty).some((dept) => dept.length > 0)
-          );
-        return hasPrograms;
-      },
+      (data) =>
+        Object.keys(data).length > 0 &&
+        Object.values(data).some((faculty) =>
+          Object.values(faculty).some((dept) => dept.length > 0)
+        ),
       "At least one program must be added"
     )
 });
@@ -185,7 +169,7 @@ export function ProgramForm() {
     if (!programExists) {
       const newProgram = {
         name: trimmedName,
-        duration: selectedDuration,
+        duration: selectedDuration + " Months",
         type: finalType as string
       };
 
@@ -378,24 +362,14 @@ export function ProgramForm() {
                             <FormItem>
                               <FormLabel className="flex items-center gap-2">
                                 <Clock className="h-4 w-4" />
-                                Duration
+                                Duration (months)
                               </FormLabel>
                               <FormControl>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select duration" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {durationOptions.map((duration, index) => (
-                                      <SelectItem key={index} value={duration}>
-                                        {duration}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                <Input
+                                  type="number"
+                                  placeholder="Enter duration in months"
+                                  {...field}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -501,7 +475,7 @@ export function ProgramForm() {
                           </div>
 
                           <div className="text-xs text-muted-foreground">
-                            Duration: <strong>{selectedDuration}</strong> | Type:{" "}
+                            Duration: <strong>{selectedDuration} Months</strong> | Type:{" "}
                             <strong>
                               {selectedProgramType === "Other"
                                 ? form.getValues("customProgramType") || "Not specified"
