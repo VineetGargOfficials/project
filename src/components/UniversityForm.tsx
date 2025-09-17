@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { GraduationCap, MapPin, Phone, Mail, Globe, Users, Calendar, Award, ChevronLeft, ChevronRight } from "lucide-react";
-import { Header } from "./Header";
+import FormHeader from "./FormHeader";
 
 const universitySchema = z.object({
   name: z.string().min(1, "Please select a university"),
@@ -59,7 +59,8 @@ export function UniversityForm() {
     { number: 1, title: "Basic Information", description: "University name, type, and basic details" },
     { number: 2, title: "Address Information", description: "Location and address details" },
     { number: 3, title: "Contact Information", description: "Phone, email, and website" },
-    { number: 4, title: "Additional Information", description: "Higher Authority, Official Email and other details" }
+    { number: 4, title: "University Information", description: "Vice Chancellor, Official Email and other details" },
+     { number: 5, title: "University Information", description: "Registrar, Official Email and other details" }
   ];
 
   const totalSteps = steps.length;
@@ -128,24 +129,10 @@ export function UniversityForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4" />
-                      University Name
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select university name" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="max-h-60">
-                        {universityOptions.map((university) => (
-                          <SelectItem key={university} value={university}>
-                            {university}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Enter University Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your University " {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -327,10 +314,10 @@ export function UniversityForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex items-center gap-2">
-                      Enter High Authority Name
+                      Vice Chancellor Name
                     </FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Authority Name" {...field} />
+                      <Input type="text" placeholder="Enter University VC Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -370,9 +357,72 @@ export function UniversityForm() {
                 )}
               />
 
+              
+
             </div>
           </div>
         );
+
+        
+      case 5:
+        return (
+            <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="highAuthorityName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      Registrar Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Enter University Registrar Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Phone className="h-4 w-4" />
+                      Enter Office Phone Number
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="+91 5551234567" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="officialEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      Enter Official Email Id
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="name@example.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              
+
+            </div>
+          </div>
+        );
+
 
       default:
         return null;
@@ -381,7 +431,7 @@ export function UniversityForm() {
 
   return (
     <>
-    <Header />
+    <FormHeader onSignIn={() => {}} onSignUp={() => {}} />
     <div className="min-h-screen bg-gradient-to-br from-background to-muted py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
